@@ -88,6 +88,8 @@ npm run dev
 
 Open **http://localhost:5188**.
 
+To protect local access, set the `PASSWORD` variable in a `.env` file (see `.env.example`) or pass it inline: `PASSWORD=secret npm run dev`. The dev and preview servers then require that password before serving any page or asset. This gate lives in the Node server, so a purely static deployment still needs your host's access control.
+
 ```bash
 npm test             # Unit tests
 npm run check:atlas  # Dataset and media validation

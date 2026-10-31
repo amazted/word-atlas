@@ -1,8 +1,9 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 import fs from "node:fs";
 import path from "node:path";
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { passwordGate } from "./plugins/password-gate";
 // Local-only content is never copied into dist or the public archive.
 function localMedia(
   req: IncomingMessage,
@@ -84,22 +85,27 @@ function localMedia(
     res.end();
   }
 }
-export default defineConfig({
-  // Deploy under a sub-path with ATLAS_BASE=/words/ npm run build
-  base: process.env.ATLAS_BASE || "/",
-  plugins: [
-    react(),
-    {
-      name: "private-local-library",
-      configureServer(server) {
-        server.middlewares.use(localMedia);
+export default defineConfig(({ mode }) => {
+  // PASSWORD is read from the shell or .env and never exposed to the client.
+  const env = loadEnv(mode, process.cwd(), "");
+  return {
+    // Deploy under a sub-path with ATLAS_BASE=/words/ npm run build
+    base: env.ATLAS_BASE || "/",
+    plugins: [
+      react(),
+      passwordGate(env.PASSWORD || ""),
+      {
+        name: "private-local-library",
+        configureServer(server) {
+          server.middlewares.use(localMedia);
+        },
+        configurePreviewServer(server) {
+          server.middlewares.use(localMedia);
+        },
       },
-      configurePreviewServer(server) {
-        server.middlewares.use(localMedia);
-      },
-    },
-  ],
-  server: { port: 5188, strictPort: true },
-  preview: { port: 5188, strictPort: true },
-  build: { chunkSizeWarningLimit: 600 },
+    ],
+    server: { port: 5188, strictPort: true },
+    preview: { port: 5188, strictPort: true },
+    build: { chunkSizeWarningLimit: 600 },
+  };
 });

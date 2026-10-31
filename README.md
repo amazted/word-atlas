@@ -116,6 +116,8 @@ npm run dev
 
 打开 **http://localhost:5188**。
 
+如需保护本地访问，在 `.env` 中设置 `PASSWORD`（参考 `.env.example`），或直接 `PASSWORD=secret npm run dev`。之后开发服务器与预览服务器都会先要求输入该密码，再提供页面和素材。该门禁运行在 Node 服务端，纯静态部署仍需依赖托管平台的访问控制。
+
 ```bash
 npm test             # 单元测试
 npm run check:atlas  # 词库结构与媒体校验
