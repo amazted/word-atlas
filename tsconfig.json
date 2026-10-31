@@ -15,5 +15,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src", "plugins", "vite.config.ts"]
+  "include": ["src", "plugins", "shared", "middleware.ts", "vite.config.ts"]
 }

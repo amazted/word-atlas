@@ -88,7 +88,7 @@ npm run dev
 
 Open **http://localhost:5188**.
 
-To protect local access, provide a `PASSWORD` variable. An environment variable wins; otherwise the value from `.env` (or `.env.local`) is used, e.g. `PASSWORD=secret npm run dev`. See `.env.example`. The dev and preview servers then require that password before serving any page or asset. This gate lives in the Node server, so a purely static deployment still needs your host's access control.
+To protect access, provide a `PASSWORD` variable. An environment variable wins; otherwise the value from `.env` (or `.env.local`) is used, e.g. `PASSWORD=secret npm run dev`. See `.env.example`. The dev and preview servers then require that password before serving any page or asset. On Vercel, set `PASSWORD` in the project's environment variables (Production and Preview) and redeploy: the root `middleware.ts` enforces the same gate at the edge. Purely static hosts that cannot run middleware still need their own access control.
 
 ```bash
 npm test             # Unit tests

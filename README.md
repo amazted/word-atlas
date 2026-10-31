@@ -116,7 +116,7 @@ npm run dev
 
 打开 **http://localhost:5188**。
 
-如需保护本地访问，提供 `PASSWORD` 变量即可：优先使用环境变量，未设置时读取 `.env`（或 `.env.local`）中的值，例如 `PASSWORD=secret npm run dev`，也可参考 `.env.example`。之后开发服务器与预览服务器都会先要求输入该密码，再提供页面和素材。该门禁运行在 Node 服务端，纯静态部署仍需依赖托管平台的访问控制。
+如需保护访问，提供 `PASSWORD` 变量即可：优先使用环境变量，未设置时读取 `.env`（或 `.env.local`）中的值，例如 `PASSWORD=secret npm run dev`，也可参考 `.env.example`。之后开发服务器与预览服务器都会先要求输入该密码，再提供页面和素材。部署到 Vercel 时，在项目环境变量中设置 `PASSWORD`（Production 与 Preview）并重新部署，根目录的 `middleware.ts` 会在边缘执行同样的校验。无法运行 middleware 的纯静态托管仍需依赖平台自带的访问控制。
 
 ```bash
 npm test             # 单元测试
