@@ -1,6 +1,6 @@
 import { randomBytes, timingSafeEqual } from "node:crypto";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import type { Plugin } from "vite";
+import type { Logger, Plugin } from "vite";
 
 const COOKIE_NAME = "word_atlas_auth";
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
@@ -262,24 +262,28 @@ function createGate(password: string, base: string) {
   };
 }
 
-export function passwordGate(password: string): Plugin {
+export function passwordGate(password: string, source = "environment"): Plugin {
   const gateBase = (base: string) => (base.endsWith("/") ? base : `${base}/`);
+  const announce = (logger: Logger) => {
+    if (!password) {
+      logger.info("password gate: PASSWORD not set, access is open");
+      return;
+    }
+    logger.info(`password gate: enabled (PASSWORD from ${source})`);
+  };
   return {
     name: "word-atlas-password-gate",
     configureServer(server) {
       server.middlewares.use(
         createGate(password, gateBase(server.config.base)),
       );
-      if (!password) {
-        server.config.logger.info(
-          "password gate: PASSWORD not set, access is open",
-        );
-      }
+      announce(server.config.logger);
     },
     configurePreviewServer(server) {
       server.middlewares.use(
         createGate(password, gateBase(server.config.base)),
       );
+      announce(server.config.logger);
     },
   };
 }

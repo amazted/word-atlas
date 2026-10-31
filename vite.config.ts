@@ -86,14 +86,18 @@ function localMedia(
   }
 }
 export default defineConfig(({ mode }) => {
-  // PASSWORD is read from the shell or .env and never exposed to the client.
   const env = loadEnv(mode, process.cwd(), "");
+  // A real environment variable wins; .env files are the fallback.
+  // The value stays on the server and is never exposed to the client.
+  const password = process.env.PASSWORD ?? env.PASSWORD ?? "";
+  const passwordSource =
+    process.env.PASSWORD !== undefined ? "environment" : "env file";
   return {
     // Deploy under a sub-path with ATLAS_BASE=/words/ npm run build
     base: env.ATLAS_BASE || "/",
     plugins: [
       react(),
-      passwordGate(env.PASSWORD || ""),
+      passwordGate(password, passwordSource),
       {
         name: "private-local-library",
         configureServer(server) {
